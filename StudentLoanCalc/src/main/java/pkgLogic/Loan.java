@@ -45,6 +45,8 @@ public class Loan {
 	public double GetPMT() {
 		double PMT = 0;
 		//TODO: Execute PMT function to determine payment with given rate, nbr of payments, PV, FV, compounding)
+		A=P {r(1+r)n} / {(1+r)n –1}
+		PMT 
 		return PMT;
 	}
 
