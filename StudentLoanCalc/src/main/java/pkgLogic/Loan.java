@@ -44,9 +44,10 @@ public class Loan {
 
 	public double GetPMT() {
 		double PMT = 0;
+		double r=(InterestRate/100)*12
 		//TODO: Execute PMT function to determine payment with given rate, nbr of payments, PV, FV, compounding)
-		A=P {r(1+r)n} / {(1+r)n –1}
-		PMT 
+		double n= LoanPaymentCnt;
+		PMT=LoanAmount/(((1+r)^n)-1)/(r(1+r)^n);
 		return PMT;
 	}
 
