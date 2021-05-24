@@ -49,7 +49,7 @@ public class LoanCalcViewController implements Initializable {
 	private StudentCalc SC = null;
 
 	@FXML
-	private ComboBox cmbLoanType;
+	private ComboBox<String> cmbLoanType;
 
 	@FXML
 	private TextField LoanAmount;
@@ -130,6 +130,7 @@ public class LoanCalcViewController implements Initializable {
 		cmbLoanType.getItems().addAll("Home", "Auto", "School");
 
 		// TODO: Default cmbLoanType to select 'Home' as the default loan type
+		cmbLoanType.setValue("Home");
 
 		cmbLoanType.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -171,7 +172,6 @@ public class LoanCalcViewController implements Initializable {
 
 	@FXML
 	private void btnClearFields(ActionEvent event) {
-
 		btnClearResults(event);
 		LoanAmount.clear();
 		InterestRate.clear();
@@ -190,7 +190,9 @@ public class LoanCalcViewController implements Initializable {
 	@FXML
 	private void btnClearResultsKeyPress(KeyEvent event) {
 		// TODO: Call the method to clear the results
-	}
+
+		   btnClearResults(new ActionEvent(event.clone(),null));
+		}
 
 	/**
 	 * btnClearFields - Clear the input fields and output chart
@@ -205,7 +207,13 @@ public class LoanCalcViewController implements Initializable {
 		hbChart.getChildren().clear();
 
 		// TODO: Clear all the output labels (lblTotalPayemnts, lblTotalInterest, etc)
+		lblEscrow.setText("");
 		lblTotalPayemnts.setText("");
+		lblTotalInterest.setText("");
+		lblInterestSaved.setText("");
+		lblMonthlyPayment.setText("");
+		lblPaymentsSaved.setText("");	
+		
 	}
 
 	private boolean ValidateData() {
@@ -222,12 +230,78 @@ public class LoanCalcViewController implements Initializable {
 			return false;
 		}
 
-		// TODO: Validate LoanAmount is a positive double
-		// TODO: Validate InterestRate is not blank and is a positive double. Validate
+		// TODO: Validate LoanAmount is a positive double	
+		if (Double.parseDouble(LoanAmount.getText()) < 0) {
+			Alert fail = new Alert(AlertType.ERROR);
+			fail.setHeaderText("Loan Amount validation");
+			fail.setContentText("Loan Amount value is not postive Double");
+			fail.showAndWait();
+			return false;			
+		}
+		
+		// TODO: Validate InterestRate is not blank and is a positive double. Validate	
 		// that the value is between 1 and 30 (2.99 = 2.99%, not 0.0299)
+		StringBuilder str1 = new StringBuilder();
+		if (InterestRate.getText().trim().isEmpty()) {
+			str1.append("Interest Rate is blank; ");
+		}
+		else {
+			double d = Double.parseDouble(InterestRate.getText());
+			if (d < 0 ) 
+				str1.append("Interest Rate NOT a positive double;");
+			else if (d<1 && d>30)
+				str1.append("Interest Rate NOT between 1 and 30;");			
+		   }
+		   if (!str1.isEmpty()) {
+				Alert fail = new Alert(AlertType.ERROR);
+				fail.setHeaderText("Interest Rate Validation");
+				fail.setContentText(str1.toString());
+				fail.showAndWait();
+		   }	
+	
+		
 		// TODO: Validate NbrOfYears is a non blank positive integer
-		// TODO: Validate AdditionalPayment, if given, is a positive double
+		StringBuilder str2 = new StringBuilder();
+		
+		if (NbrOfYears.getText().trim().isEmpty()) {
+			str2.append("NbrOfYears is blank; ");	
+		}
+		else {
+			int d = Integer.parseInt(NbrOfYears.getText());
+			if (d < 0 ) 
+				str2.append("NbrOfYears Rate NOT a positive Integer;");		
+		}
+		if (!str2.isEmpty()) {
+			Alert fail = new Alert(AlertType.ERROR);
+			fail.setHeaderText("NbrOfYears  Validation");
+			fail.setContentText(str2.toString());
+			fail.showAndWait();
+		}
+		
+		
+		// TODO: Validate AdditionalPayment, if given, is a positive double		
+		if (!AdditionalPayment.getText().trim().isEmpty()) {
+				if (Double.parseDouble(AdditionalPayment.getText()) < 0){
+					Alert fail = new Alert(AlertType.ERROR);
+					fail.setHeaderText("AdditionalPayment is not postive Double");
+					fail.setContentText("AdditionalPayment Validation");
+					fail.showAndWait();
+					return false;		
+				}
+
+		}
+		
+		
 		// TODO: Validate EscrowAmount, if given, is a positive double
+		if (!EscrowAmount.getText().trim().isEmpty()) {
+			if (Double.parseDouble(EscrowAmount.getText()) < 0){
+				Alert fail = new Alert(AlertType.ERROR);
+				fail.setHeaderText("EscrowAmount is not postive Double");
+				fail.setContentText("EscrowAmount Validation");
+				fail.showAndWait();
+				return false;		
+			}
+		}
 
 		return true;
 	}
@@ -242,7 +316,8 @@ public class LoanCalcViewController implements Initializable {
 	private void btnCalcLoan(ActionEvent event) {
 
 		// TODO: Call the method to Clear the Results
-
+		btnClearResults(event);
+		
 		// Validate the data. If the method returns 'false', exit the method
 		if (ValidateData() == false)
 			return;
@@ -265,12 +340,16 @@ public class LoanCalcViewController implements Initializable {
 
 		NumberFormat fmtCurrency = NumberFormat.getCurrencyInstance(Locale.US);
 		lblTotalPayemnts.setText(fmtCurrency.format(loanExtra.getTotalPayments()));
-		// TODO: Set lblTotalInterest label with loanExtra's total interest payments
-
+		
+		// TODO: Set lblTotalInterest label with loanExtra's total interest payments		
+		lblTotalInterest.setText(fmtCurrency.format(loanExtra.getTotalInterest()));
+		
 		// TODO: Set lblTotalInterest label with loanExtra's PMT
-
+		lblTotalInterest.setText(fmtCurrency.format(loanExtra.GetPMT()));
+		
 		// TODO: Set lblInterestSaved to the total interest saved
-
+		lblInterestSaved.setText(fmtCurrency.format(loanExtra.getTotalInterest()-loanNoExtra.getTotalInterest()));
+		
 		lblPaymentsSaved
 				.setText(String.valueOf(loanNoExtra.getLoanPayments().size() - loanExtra.getLoanPayments().size()));
 
@@ -1018,3 +1097,4 @@ public class LoanCalcViewController implements Initializable {
 	}
 
 }
+
