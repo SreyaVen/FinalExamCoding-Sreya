@@ -1,6 +1,7 @@
 package pkgLogic;
 
 import java.time.LocalDate;
+import java.lang.Math;
 import java.util.ArrayList;
 
 import org.apache.poi.ss.formula.functions.FinanceLib;
@@ -45,18 +46,27 @@ public class Loan {
 	public double GetPMT() {
 		double PMT = 0;
 		//TODO: Execute PMT function to determine payment with given rate, nbr of payments, PV, FV, compounding)
+		
+		double r = (InterestRate/100)/12;
+		double n = LoanPaymentCnt;
+		PMT = LoanAmount/(Math.pow((1+r),n)-1)/(r*Math.pow((1+r),n));		
 		return PMT;
 	}
 
 	public double getTotalPayments() {
 		//TODO: Return the total payments for the loan
 		double tot = 0;
+		tot = loanPayments.size();
 		return tot;
 	}
 
 	public double getTotalInterest() {
 		//TODO: Return the total interest for the loan
 		double interest = 0;
+		for(int i = 0; i < loanPayments.size(); i++)
+		{
+		    interest = interest + loanPayments.get(i).getInterestPayment();
+		}
 		return interest;
 	}
 
@@ -129,3 +139,4 @@ public class Loan {
 	}
 
 }
+
