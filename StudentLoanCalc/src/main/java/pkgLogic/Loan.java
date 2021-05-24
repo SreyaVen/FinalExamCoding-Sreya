@@ -54,12 +54,17 @@ public class Loan {
 	public double getTotalPayments() {
 		//TODO: Return the total payments for the loan
 		double tot = 0;
+		tot=loanPayments.size();
 		return tot;
 	}
 
 	public double getTotalInterest() {
 		//TODO: Return the total interest for the loan
 		double interest = 0;
+		for(i=0;i<loanPayment.size();i++)
+		{
+			interest=interest+loanPayments.get(i).getInterestPayment();
+		}
 		return interest;
 	}
 
